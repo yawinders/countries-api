@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 
 import './CountryDetail.css'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 export default function CountryDetail() {
-    const countryName = new URLSearchParams(location.search).get('name')
+    // const countryName = new URLSearchParams(location.search).get('name')
+    const param = useParams();
+    const countryName = param.country;
 
     const [countryData, setCountryData] = useState(null)
 
@@ -12,7 +14,7 @@ export default function CountryDetail() {
         fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
             .then((res) => res.json())
             .then(([data]) => {
-                console.log(data)
+                // console.log(data)
                 setCountryData({
                     name: data.name.common,
                     nativeName: Object.values(data.name.nativeName)[0].common,
@@ -27,15 +29,26 @@ export default function CountryDetail() {
                         .map((currency) => currency.name)
                         .join(', '),
 
+                    Borders: []
+
+                })
+                data.borders.map((border) => {
+                    fetch(`https://restcountries.com/v3.1/alpha/${border}`)
+                        .then((res) => res.json())
+                        .then(([borderCountry]) => {
+                            //console.log(borderCountry.name.common)
+                            setCountryData((prevState) => ({ ...prevState, Borders: [...prevState.Borders, borderCountry.name.common] }))
+
+                        })
                 })
             })
-    }, [])
+    }, [countryName])
     return countryData === null ? (
         'loading...'
     ) : (
         <main>
             <div className="country-details-container">
-                <Link className="country-card" to={`/`}>
+                <Link to={`/`}>
                     {<span className="back-button">
                         <i className="fa-solid fa-arrow-left"></i>&nbsp; Back
                     </span>}
@@ -81,7 +94,10 @@ export default function CountryDetail() {
                             </p>
                         </div>
                         <div className="border-countries">
-                            <b>Border Countries: </b>&nbsp;
+                            {countryData.Borders.length !== 0 && <b>Border Countries: </b>}
+                            {
+                                countryData.Borders.length !== 0 && countryData.Borders.map(border => <Link key={border} to={`/${border}`}>{border}</Link>)
+                            }
                         </div>
                     </div>
                 </div>

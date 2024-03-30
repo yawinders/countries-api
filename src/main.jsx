@@ -4,6 +4,7 @@ import Header from './Components/Header.jsx';
 import App from './App.jsx'
 import ContactUs from './Components/ContactUs.jsx';
 
+
 import {
   createBrowserRouter,
   RouterProvider,
@@ -14,15 +15,15 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    children: [
-      {
-        path: "/",
-        element: <div>ContactUs</div>,
-      },
-    ]
+    // children: [
+    //   {
+    //     path: "/",
+    //     element: <div>ContactUs</div>,
+    //   },
+    // ]
   },
   {
-    path: '/country',
+    path: '/:country',   //created dynamic routing by using colon:
     element: <CountryDetail />,
   },
 
